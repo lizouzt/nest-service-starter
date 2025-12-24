@@ -1,0 +1,13 @@
+{
+    "CORS"          : "http://localhost:3001",
+    "PORT"          : 8001,
+    "HOST"          : "127.0.0.1",
+    "RESOURCES_PATH": "/var/www/local/statics",
+    "CDN_NAME"      : ["big1"],
+    "CDN_PATH"      : "/var/www/oss",
+    "RESOURCES_URI": {
+        "LOCAL": "http://127.0.0.1/git/temp-statics",
+        "OSS": "https://oss.aliyun.com/gbuy/",
+        "CDN": "https://cdn.oss.aliyun.com/gbuy/"
+    }
+}

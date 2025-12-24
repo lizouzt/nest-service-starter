@@ -1,0 +1,11 @@
+.DS_Store
+*.swp
+.sw*
+.idea
+logs/*
+shell
+config/prod*
+node_modules
+temp
+dist
+logs
