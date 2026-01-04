@@ -1,6 +1,5 @@
 {
     "CORS"          : "http://localhost:3001",
-    "PORT"          : 8001,
     "HOST"          : "127.0.0.1",
     "RESOURCES_PATH": "/var/www/local/statics",
     "CDN_NAME"      : ["big1"],

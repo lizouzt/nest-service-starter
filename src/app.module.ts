@@ -1,7 +1,9 @@
+import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { LoggerModule } from 'nestjs-pino';
 import * as redisStore from 'cache-manager-redis-store';
 import configuration from './config/configuration';
@@ -11,6 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { RateLimitGuard } from './common/guards/rate-limit.guard';
 import { FileCenterModule } from './modules/file-center/file-center.module';
 import { CommonModelModule } from './modules/common-model/common-model.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -82,8 +85,19 @@ import { CommonModelModule } from './modules/common-model/common-model.module';
       inject: [ConfigService],
       isGlobal: true,
     }),
+
+    // 静态文件服务
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/public',
+      serveStaticOptions: {
+        cacheControl: true,
+        maxAge: 3600,
+        fallthrough: true,
+      },
+    }),
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,

@@ -1,6 +1,4 @@
 {
     "name": "wms",
-    "secret": ".this is secret token",
-    "maxAge": 3600,
-    "PORT": "8001"
+    "secret": ".this is secret token"
 }

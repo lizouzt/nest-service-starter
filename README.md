@@ -1,6 +1,6 @@
-# Efficiency-BFF (Modernized)
+# NestJS Microservice(Modernized)
 
-Efficiency-BFF 是一个基于 **NestJS** 和 **TypeScript** 构建的高效后端服务层 (BFF)，由原 Koa2 项目重构而来。它负责处理监控数据上报、分片文件上传、以及通用的动态数据查询业务。
+基于 **NestJS** 和 **TypeScript** 构建的高效后端服务层 (BFF)，由原 Koa2 项目重构而来。它负责处理监控数据上报、分片文件上传、以及通用的动态数据查询业务。
 
 ## 1. 架构概览
 
@@ -39,20 +39,14 @@ npm install
 
 ### 开发环境启动 (NestJS)
 ```bash
-# 默认监听 8002 端口
-npm run dev:nest
+# 默认监听 8001 端口
+npm run start:dev or npm run dev
 ```
 
 ### 生产编译与启动
 ```bash
 npm run build
 npm run start:prod
-```
-
-### 旧项目运行 (Koa)
-```bash
-# 默认监听 8001 端口 (用于兼容性对比)
-npm run dev
 ```
 
 ## 4. 核心功能说明
