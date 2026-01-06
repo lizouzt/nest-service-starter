@@ -78,12 +78,6 @@ export class AuthService {
     return authCodes.findIndex(item => item === authCode || new RegExp(`^${authCode}_\S`).test(item)) > -1;
   }
 
-  // 外部服务调用的存根 (Stub) - can be improved later
-  private async fetchUserStatus(userId: string): Promise<string | null> {
-    // Already handled in checkUserStatus
-    return null; 
-  }
-
   // 外部服务调用的存根 (Stub)
   private async fetchAuthCodes(userId: string): Promise<string[]> {
     // TODO: Implement fetching permissions from DB

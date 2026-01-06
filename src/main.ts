@@ -6,7 +6,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule, { 
+    bufferLogs: true, 
+    cors: {
+      origin: '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      allowedHeaders: 'Content-Type, Authorization',
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+      credentials: true,
+    }
+  });
   app.useLogger(app.get(Logger));
   
   // 注册全局管道、过滤器、拦截器
