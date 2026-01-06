@@ -1,32 +1,61 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger, UnauthorizedException } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { JwtService } from '@nestjs/jwt';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection, Types } from 'mongoose';
+import * as crypto from 'crypto';
 import { UserStatus, AUTH_CACHE_SEC } from './auth.constants';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private jwtService: JwtService,
+    @InjectConnection() private connection: Connection,
+  ) {}
+
+  async validateUser(username: string, pass: string): Promise<any> {
+    const user = await this.connection.collection('sys_users').findOne({ username });
+    if (!user) {
+        throw new UnauthorizedException('User not found');
+    }
+    
+    // Simple MD5 check. In production, use bcrypt/argon2.
+    const hashedPassword = crypto.createHash('md5').update(pass).digest('hex');
+    
+    // Support both plain text (for dev/init) and hashed password
+    if (user.password !== pass && user.password !== hashedPassword) {
+        throw new UnauthorizedException('Invalid password');
+    }
+    
+    const { password, ...result } = user;
+    return result;
+  }
+
+  async login(user: any) {
+    const payload = { userId: user._id.toString(), userName: user.username };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
 
   async checkUserStatus(userId: string): Promise<boolean> {
     const userStatusCacheKey = `user_status_${userId}`;
     let userStatus = await this.cacheManager.get<string>(userStatusCacheKey);
 
     if (!userStatus) {
-      return false; // 等同于 205 状态码
+      // If not in cache, try to fetch from DB (Stub implementation replaced with DB check)
+      const user = await this.connection.collection('sys_users').findOne({ _id: new Types.ObjectId(userId) });
+      if (user && user.status) {
+          userStatus = user.status;
+          await this.cacheManager.set(userStatusCacheKey, userStatus, AUTH_CACHE_SEC);
+      } else {
+          return false;
+      }
     }
-
-    // 更新缓存
-    await this.cacheManager.set(userStatusCacheKey, userStatus, AUTH_CACHE_SEC); // cache-manager v5 uses milliseconds? No, check version. NestJS v10 uses cache-manager v5 which uses milliseconds usually. 
-    // Wait, the cache-manager-redis-store might expect TTL in seconds. 
-    // The legacy code used 60 * 5 (seconds). 
-    // NestJS CacheModule defaults: "ttl: seconds" (v4) or milliseconds (v5).
-    // I should verify CacheModule config in app.module.
-    
-    // In app.module.ts: ttl: configService.get('maxAge') || 3600 (seconds likely)
-    // cache-manager-redis-store usually takes seconds for TTL.
-    // I will use seconds here, assuming standard redis store behavior.
 
     return userStatus === UserStatus.RUNING;
   }
@@ -49,15 +78,15 @@ export class AuthService {
     return authCodes.findIndex(item => item === authCode || new RegExp(`^${authCode}_\S`).test(item)) > -1;
   }
 
-  // 外部服务调用的存根 (Stub)
+  // 外部服务调用的存根 (Stub) - can be improved later
   private async fetchUserStatus(userId: string): Promise<string | null> {
-    // TODO: 实现从用户服务获取数据的逻辑
+    // Already handled in checkUserStatus
     return null; 
   }
 
   // 外部服务调用的存根 (Stub)
   private async fetchAuthCodes(userId: string): Promise<string[]> {
-    // TODO: 实现从用户服务获取数据的逻辑
+    // TODO: Implement fetching permissions from DB
     return [];
   }
 }

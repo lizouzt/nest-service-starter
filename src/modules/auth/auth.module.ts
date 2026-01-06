@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PermissionsGuard } from './guards/permissions.guard';
+import { AuthController } from './auth.controller';
 
 @Global()
 @Module({
@@ -19,6 +20,7 @@ import { PermissionsGuard } from './guards/permissions.guard';
       inject: [ConfigService],
     }),
   ],
+  controllers: [AuthController],
   providers: [AuthService, JwtStrategy, PermissionsGuard],
   exports: [AuthService, JwtModule, PermissionsGuard],
 })
