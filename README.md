@@ -39,7 +39,7 @@ npm install
 
 ### 开发环境启动 (NestJS)
 ```bash
-# 默认监听 8001 端口
+# 默认监听 8001 端口 (可在 config/base.json 修改)
 npm run start:dev or npm run dev
 ```
 

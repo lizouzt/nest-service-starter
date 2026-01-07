@@ -1,4 +1,5 @@
 {
     "name": "wms",
+    "port": 8001,
     "secret": ".this is secret token"
 }

@@ -14,6 +14,7 @@ import { RateLimitGuard } from './common/guards/rate-limit.guard';
 import { FileCenterModule } from './modules/file-center/file-center.module';
 import { CommonModelModule } from './modules/common-model/common-model.module';
 import { AppController } from './app.controller';
+import { CcProxyModule } from './modules/cc-proxy/cc-proxy.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AppController } from './app.controller';
     // 业务模块
     FileCenterModule,
     CommonModelModule,
+    CcProxyModule,
     
     // 日志模块
     LoggerModule.forRoot({
